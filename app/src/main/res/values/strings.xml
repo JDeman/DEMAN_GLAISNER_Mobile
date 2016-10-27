@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Deman-Glaisner-Mobile</string>
+    <string name="action_settings">Settings</string>
+
+    <string-array name="cities_array">
+        <item>Paris</item>
+        <item>Marseille</item>
+        <item>Lille</item>
+        <item>Bordeaux</item>
+        <item>Nantes</item>
+        <item>Nice</item>
+        <item>Strasbourg</item>
+        <item>Lyon</item>
+        <item>Rennes</item>
+        <item>Montpelier</item>
+    </string-array>
+
+    <string-array name="foodtypes_array">
+        <item>Grec</item>
+        <item>Texmex</item>
+        <item>Chinois</item>
+        <item>Japonais</item>
+        <item>Libanais</item>
+        <item>Fast-food</item>
+        <item>Pizza</item>
+        <item>Italien</item>
+        <item>Indien</item>
+    </string-array>
+
+</resources>
