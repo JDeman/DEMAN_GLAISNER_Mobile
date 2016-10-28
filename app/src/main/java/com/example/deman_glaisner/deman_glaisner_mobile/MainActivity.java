@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -26,6 +28,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Ain't working", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        Button searchButton = (Button) findViewById(R.id.button):
+        searchButton (new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(view, "search button clicked", Toast.LENGTH_SHORT)
                         .setAction("Action", null).show();
             }
         });
