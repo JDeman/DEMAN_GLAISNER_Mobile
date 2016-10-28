@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -24,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Ain't working", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -48,6 +49,15 @@ public class MainActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinner2.setAdapter(adapter2);
+
+        spinner1 =(Spinner) findViewById(R.id.spinner1);
+        String text_spinner1 = spinner1.getSelectedItem().toString();
+
+        spinner2 =(Spinner) findViewById(R.id.spinner2);
+        String text_spinner2 = spinner2.getSelectedItem().toString();
+
+        System.out.println(text_spinner1);
+        System.out.println(text_spinner2);
     }
 
     @Override
