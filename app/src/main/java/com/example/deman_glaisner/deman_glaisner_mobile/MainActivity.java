@@ -1,6 +1,8 @@
 package com.example.deman_glaisner.deman_glaisner_mobile;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,8 @@ import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    private DownloadFragment dfrag = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,12 +36,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button searchButton = (Button) findViewById(R.id.button):
-        searchButton (new View.OnClickListener() {
+        Button searchButton = (Button) findViewById(R.id.button);
+        searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(view, "search button clicked", Toast.LENGTH_SHORT)
-                        .setAction("Action", null).show();
+                Toast.makeText(getApplicationContext(), "Liste chargée", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -61,14 +64,14 @@ public class MainActivity extends AppCompatActivity {
         // Apply the adapter to the spinner
         spinner2.setAdapter(adapter2);
 
+        //recuperation des valeurs avant lancement de la recherche
         spinner1 =(Spinner) findViewById(R.id.spinner1);
         String text_spinner1 = spinner1.getSelectedItem().toString();
-
         spinner2 =(Spinner) findViewById(R.id.spinner2);
         String text_spinner2 = spinner2.getSelectedItem().toString();
-
         System.out.println(text_spinner1);
         System.out.println(text_spinner2);
+
     }
 
     @Override
@@ -91,5 +94,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    //Action a effectuer au click du boutton recherche
+    public void displayRestaurantList(View v){
+        dfrag = new DownloadFragment();
+        dfrag.show(getFragmentManager(), "test");
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                Intent i = new Intent(getApplicationContext(), RestaurantList.class);
+                startActivity(i);
+            }
+        }, 100);
     }
 }

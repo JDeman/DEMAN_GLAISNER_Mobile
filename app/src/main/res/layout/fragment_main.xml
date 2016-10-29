@@ -28,6 +28,7 @@
 
         <Button
             android:text="Lancer la recherche"
+            android:onClick="displayRestaurantList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="37dp"
