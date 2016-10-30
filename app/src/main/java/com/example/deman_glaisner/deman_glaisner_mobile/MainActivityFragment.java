@@ -16,6 +16,8 @@ import android.widget.ArrayAdapter;
  */
 public class MainActivityFragment extends Fragment {
 
+    //private DownloadFragment dfrag = null;
+
     public MainActivityFragment() {
     }
 
@@ -24,5 +26,4 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_main, container, false);
     }
-
 }

@@ -1,5 +1,6 @@
 package com.example.deman_glaisner.deman_glaisner_mobile;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,10 +16,25 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.util.Hashtable;
+
 
 public class MainActivity extends AppCompatActivity {
 
     private DownloadFragment dfrag = null;
+
+    Hashtable<String, double[]> ht = new Hashtable<>();
+
+    double[] bostonCord = new double[]{42.360083,-71.05888};
+    double[] nyCord = {40.712784,-74.005941};
+    double[] laCord= {};
+    double[] chicagoCord= {};
+    double[] seattleCord= {};
+    double[] denverCord= {};
+    double[] lasvegasCord= {};
+    double[] miamiCord = {};
+    double[] dallasCord = {};
+    double[] sfCord ={};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +42,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        ht.put("Boston", bostonCord);
+        ht.put("New York", nyCord);
+        ht.put("Los Angeles", laCord);
+        ht.put("Chicago", chicagoCord);
+        ht.put("Seattle", seattleCord);
+        ht.put("Denver", denverCord);
+        ht.put("Las Vegas", lasvegasCord);
+        ht.put("Miami", miamiCord);
+        ht.put("Dallas", dallasCord);
+        ht.put("San Francisco", sfCord);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -37,41 +65,20 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Button searchButton = (Button) findViewById(R.id.button);
+        final Spinner spinner1 = (Spinner) findViewById(R.id.spinner1);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.cities_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner1.setAdapter(adapter);
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Liste chargée", Toast.LENGTH_SHORT).show();
+                String text_spinner1 = spinner1.getSelectedItem().toString();
+                System.out.println(text_spinner1);
+                Toast.makeText(getApplicationContext(), "Liste pour: " + text_spinner1, Toast.LENGTH_SHORT).show();
             }
         });
-
-        //Chargement du spinner pour le choix des villes
-        Spinner spinner1 = (Spinner) findViewById(R.id.spinner1);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.cities_array, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner1.setAdapter(adapter);
-
-        //Chargement du spinner pour le style de bouffe
-        Spinner spinner2 = (Spinner) findViewById(R.id.spinner2);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this,
-                R.array.foodtypes_array, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner2.setAdapter(adapter2);
-
-        //recuperation des valeurs avant lancement de la recherche
-        spinner1 =(Spinner) findViewById(R.id.spinner1);
-        String text_spinner1 = spinner1.getSelectedItem().toString();
-        spinner2 =(Spinner) findViewById(R.id.spinner2);
-        String text_spinner2 = spinner2.getSelectedItem().toString();
-        System.out.println(text_spinner1);
-        System.out.println(text_spinner2);
-
     }
 
     @Override
@@ -95,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 
     //Action a effectuer au click du boutton recherche
     public void displayRestaurantList(View v){
