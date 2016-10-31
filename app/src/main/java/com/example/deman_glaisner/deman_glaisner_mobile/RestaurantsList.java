@@ -9,7 +9,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.View;
-import android.widget.ExpandableListView;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,54 +24,39 @@ import java.util.concurrent.ExecutionException;
 
 public class RestaurantsList extends AppCompatActivity {
 
-    private String currentSort = "categories";
-    private ArrayList<Integer> beerID, beerTypeID, beerOriginID, categoryID;
-    private ArrayList<String> beerName;
-    private ExpandableListView expandableListView;
-    private List<String> viewParents;
+    private ArrayList<Integer> idlist;
+    private ArrayList<String> restaurantList;
+    private ListView listView;
     private HashMap<String, List<String>> viewChildren;
-    private CustomExpListAdapter expandableListAdapter;
 
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.beer_list);
-        downloadAllBeers();
-
-        expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);
-
-        fillView();
-
+        setContentView(R.layout.restaurant_list);
+        listView = (ListView) findViewById(R.id.listView);
+        idlist = fillView();
         Toast.makeText(getApplicationContext(), "Liste chargée", Toast.LENGTH_SHORT).show();
-        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                describeBeer(viewChildren.get(viewParents.get(groupPosition)).get(childPosition));
-                return false;
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+                describeRestaurant(listView.getItemAtPosition(position).toString());
             }
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_beerlist, menu);
-        return true;
-    }
-
-    private void describeBeer(String clickedBeer) {
+    private void describeRestaurant(String clickedrestaurant) {
         int i = 0;
-        while(!beerName.get(i).equals(clickedBeer))
+        while(!restaurantList.get(i).equals(clickedrestaurant))
             i++;
 
-        int clickedBeerId = beerID.get(i);
+        int clickedrestaurantID = idlist.get(i);
         Intent intent = new Intent(getApplicationContext(),RestaurantsList.class);
-        intent.putExtra("beerID", clickedBeerId);
+        intent.putExtra("restaurantID", clickedrestaurantID);
         startActivity(intent);
 
     }
 
-    private void fillView() {
+    private ArrayList<Integer> fillView() {
 
         DownloadTask dlTask = new DownloadTask();
         JSONObject jsonObject = null;
@@ -80,140 +66,34 @@ public class RestaurantsList extends AppCompatActivity {
         ArrayList<String> tmpList;
         int tmpId;
 
-        categoryID = new ArrayList<Integer>();
+        //Arrays de coordonnées a mettre ici
 
-        dlTask.execute("GET", "http://binouze.fabrigli.fr/" + currentSort + ".json", "TXT");
+
+        dlTask.execute("GET", "https://developers.zomato.com/api/v2.1/search?lat=42.360083&lon=-71.05888&radius=3000", "TXT");
 
         try {
             webContent = dlTask.get();
-        }
-        catch(InterruptedException | ExecutionException e) {}
 
-        try {
-            jsonArray = new JSONArray(webContent);
-        }
-        catch (JSONException e){}
+            JSONObject parentObject = new JSONObject(webContent);
+            JSONArray parentArray = parentObject.getJSONArray("nearby_restaurants");
 
-        parentsList = new ArrayList<>();
-        viewParents = new ArrayList<>();
-        viewChildren = new HashMap<>();
 
-        try {
+            //JSON MAGIC HERE JSON JSON JSON JSON JSON JSON JSON JSON jSON
+            for(int i = 0 ; i < parentArray.length() ; i++) {
 
-            for(int i = 0 ; i < jsonArray.length() ; i++) {
-                jsonObject = jsonArray.getJSONObject(i);
-                viewParents.add(jsonObject.getString("name"));
-                categoryID.add(jsonObject.getInt("id"));
-                tmpList = new ArrayList<String>();
-                parentsList.add(tmpList);
+                JSONObject finalObject =  parentArray.getJSONObject(i);
+                String restaurantName = finalObject.getJSONObject("restaurant").getString("name");
+                int id = finalObject.getJSONObject("restaurant").getJSONObject("R").getInt("id");
+                restaurantList.add(restaurantName);
+                idlist.add(id);
 
             }
 
-        }
+        } catch(InterruptedException | ExecutionException e) {
 
-        catch (JSONException e) {}
+        } catch (JSONException e){}
 
-        viewParents.add("Non classé");
-        categoryID.add(-1);
-        tmpList = new ArrayList<String>();
-        parentsList.add(tmpList);
-
-
-        ArrayList<Integer> filterApplied;
-        currentSort.equals("categories");
-        filterApplied = beerTypeID;
-
-        for(int i = 0 ; i < categoryID.size() ; i++) {
-
-            tmpId = categoryID.get(i);
-            tmpList = parentsList.get(i);
-
-            for(int j = 0 ; j < beerID.size() ; j++) {
-                if(filterApplied.get(j) == tmpId)
-                    tmpList.add(beerName.get(j));
-            }
-        }
-
-        for(int i = 0 ; i < viewParents.size() ; i++)
-            viewChildren.put(viewParents.get(i), parentsList.get(i));
-
-
-        expandableListAdapter = new CustomExpListAdapter(this, viewParents, viewChildren);
-        expandableListView.setAdapter(expandableListAdapter);
+        return idlist;
 
     }
-
-    private void downloadAllBeers() {
-
-        DownloadTask dlTask;
-        JSONArray jsonArray = null;
-        JSONObject jsonObject = null, jsonOrigin;
-        String jsonString = new String();
-
-        beerID = new ArrayList<Integer>();
-        beerTypeID = new ArrayList<Integer>();
-        beerOriginID = new ArrayList<Integer>();
-        beerName = new ArrayList<String>();
-
-        dlTask = new DownloadTask();
-        dlTask.execute("GET", "http://binouze.fabrigli.fr/bieres.json", "BTXT");
-
-        try {
-            jsonString = dlTask.get();
-        }
-        catch(InterruptedException | ExecutionException e) {}
-
-        try {
-            jsonArray = new JSONArray(jsonString);
-        }
-        catch(JSONException e) {}
-
-        for(int i = 0 ; i < jsonArray.length() ; i++) {
-
-            try {
-                jsonObject = jsonArray.getJSONObject(i);
-            }
-            catch (JSONException e) {}
-
-            int beerIdTmp, beerTypeIdTmp, beerOriginTmp;
-            String beerNameTmp;
-
-            try {
-                beerIdTmp = jsonObject.getInt("id");
-            }
-            catch(JSONException e) {
-                beerIdTmp = -1;
-            }
-
-            try {
-                beerTypeIdTmp = jsonObject.getInt("category_id");
-            }
-            catch(JSONException e) {
-                beerTypeIdTmp = -1;
-            }
-
-            try {
-                beerNameTmp = jsonObject.getString("name");
-            }
-            catch(JSONException e) {
-                beerNameTmp = "Sans nom";
-            }
-
-            try {
-                jsonOrigin = jsonObject.getJSONObject("country");
-                beerOriginTmp = jsonOrigin.getInt("id");
-            }
-            catch(JSONException e) {
-                beerOriginTmp = -1;
-            }
-
-            beerID.add(beerIdTmp);
-            beerTypeID.add(beerTypeIdTmp);
-            beerName.add(beerNameTmp);
-            beerOriginID.add(beerOriginTmp);
-
-        }
-
-    }
-
 }

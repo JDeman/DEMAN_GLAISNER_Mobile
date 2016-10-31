@@ -4,8 +4,6 @@ package com.example.deman_glaisner.deman_glaisner_mobile;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -27,14 +25,14 @@ public class MainActivity extends AppCompatActivity {
 
     double[] bostonCord = new double[]{42.360083,-71.05888};
     double[] nyCord = {40.712784,-74.005941};
-    double[] laCord= {};
-    double[] chicagoCord= {};
-    double[] seattleCord= {};
-    double[] denverCord= {};
-    double[] lasvegasCord= {};
-    double[] miamiCord = {};
-    double[] dallasCord = {};
-    double[] sfCord ={};
+    double[] laCord= {34.052234,-118.243685};
+    double[] chicagoCord= {41.878114,-87.629798};
+    double[] seattleCord= {47.60621,-122.332071};
+    double[] denverCord= {47.60621,-122.332071};
+    double[] lasvegasCord= {36.169941,-115.13983};
+    double[] miamiCord = {25.76168,-80.19179};
+    double[] dallasCord = {32.776664,-96.796988};
+    double[] sfCord ={37.77493,-122.419416};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,16 +51,6 @@ public class MainActivity extends AppCompatActivity {
         ht.put("Miami", miamiCord);
         ht.put("Dallas", dallasCord);
         ht.put("San Francisco", sfCord);
-
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Ain't working", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         Button searchButton = (Button) findViewById(R.id.button);
         final Spinner spinner1 = (Spinner) findViewById(R.id.spinner1);
@@ -111,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                Intent i = new Intent(getApplicationContext(), RestaurantList.class);
+                Intent i = new Intent(getApplicationContext(), RestaurantsList.class);
                 startActivity(i);
             }
         }, 100);

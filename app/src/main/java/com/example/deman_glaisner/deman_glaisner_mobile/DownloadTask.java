@@ -40,6 +40,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 
         InputStream is = null;
         String result = "Erreur";
+        String API_KEY = "92bf152a1c366bc032ffce163a0f5d44";
 
         try {
 
@@ -49,6 +50,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 
             if(fileType.equals("JSON"))
                 conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("user-key", " "+API_KEY);
             conn.connect();
 
             if(webMethod.equals("POST")) {
