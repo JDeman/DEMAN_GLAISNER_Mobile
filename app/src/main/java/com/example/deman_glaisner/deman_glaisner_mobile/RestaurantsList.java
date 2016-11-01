@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.ArrayAdapter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,101 +25,78 @@ import java.util.concurrent.ExecutionException;
 
 public class RestaurantsList extends AppCompatActivity {
 
-    private ArrayList<Integer> idlist;
-    private ArrayList<String> restaurantList;
+
+    private List<String> nameList = new ArrayList<>();
+    private List<Integer> idList = new ArrayList<>();
     private ListView listView;
-    //private HashMap<String, List<String>> viewChildren;
 
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.restaurant_list);
-        listView = (ListView) findViewById(R.id.listView);
+        listView = (ListView) findViewById(R.id.restaurant);
         String webContent = null;
         DownloadTask dlTask = new DownloadTask();
 
-        try{
+        try {
 
-            dlTask.execute("GET", "https://developers.zomato.com/api/v2.1/search?lat=32.776664&lon=-96.796988&radius=2000", "JSON");
+            dlTask.execute("GET", "https://developers.zomato.com/api/v2.1/search?lat=25.76168&lon=-80.19179&radius=1200", "JSON");
             webContent = dlTask.get();
 
-        }catch (InterruptedException | ExecutionException e){}
+        } catch (InterruptedException | ExecutionException e) {
+        }
 
-        System.out.println("webcontent vaut: ");
+        System.out.println("webcontent vaut: " + webContent);
         System.out.println("webcontent taille: " + webContent.length());
-        //idlist = fillView();
 
         Toast.makeText(getApplicationContext(), "ID premier: ", Toast.LENGTH_SHORT).show();
-        //System.out.println("valeur: " +idlist.get(1));
 
-        /*
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-                describeRestaurant(listView.getItemAtPosition(position).toString());
-            }
-        });*/
-    }
+        // JSON PARSING POUR NAME ET RESTAURANT_ID
 
-    /*
-    private void describeRestaurant(String clickedrestaurant) {
-        int i = 0;
-        while(!restaurantList.get(i).equals(clickedrestaurant))
-            i++;
-
-        int clickedrestaurantID = idlist.get(i);
-        Intent intent = new Intent(getApplicationContext(),RestaurantsList.class);
-        intent.putExtra("restaurantID", clickedrestaurantID);
-        startActivity(intent);
-
-    }*/
-
-    private ArrayList<Integer> fillView() {
-
-
-        JSONObject jsonObject = null;
-        JSONArray jsonArray = null;
-        String webContent;
-        List<ArrayList<String>> parentsList = null;
-        ArrayList<String> tmpList;
-        ArrayList<Integer> aalist = new ArrayList<>();
-        int tmpId;
-
-        //Arrays de coordonnées a mettre ici
-
-
-        //return dlTask.execute("GET", "https://developers.zomato.com/api/v2.1/search?lat=32.776664&lon=-96.796988&radius=3000", "JSON");
-        //System.out.println("récupération du JSON");
-
-        /*try {
+        try {
 
             JSONObject parentObject = new JSONObject(webContent);
-            JSONArray parentArray = parentObject.getJSONArray("nearby_restaurants");
+            JSONArray parentArray = parentObject.getJSONArray("restaurants");
 
 
             //JSON MAGIC HERE JSON JSON JSON JSON JSON JSON JSON JSON jSON
-            for(int i = 0 ; i < parentArray.length() ; i++) {
+            for (int i = 0; i < parentArray.length(); i++) {
                 System.out.println("RECUPERATION DES VALEURS JSON");
-                JSONObject finalObject =  parentArray.getJSONObject(i);
+                JSONObject finalObject = parentArray.getJSONObject(i);
                 String restaurantName = finalObject.getJSONObject("restaurant").getString("name");
-                System.out.println("Nom restaurant recupere" + restaurantName);
-                int id = finalObject.getJSONObject("restaurant").getJSONObject("R").getInt("id");
+                System.out.println("Nom restaurant recupere: " + restaurantName);
+                int id = finalObject.getJSONObject("restaurant").getJSONObject("R").getInt("res_id");
                 System.out.println("restaurad ID recupere" + id);
-                System.out.println("Ajout d'une valeur dans restaurantList");
-                restaurantList.add(restaurantName);
+                System.out.println("Ajout d'une valeur dans nameList");
+                nameList.add(restaurantName);
                 System.out.println("AJOUT d'une valeur dans idList");
-                idlist.add(id);
+                idList.add(id);
 
             }
 
-        }catch (InterruptedException | ExecutionException | JSONException e){}
+            for(int i = 0; i < nameList.size(); i++) {
+                System.out.println("VALEURS de nameList: " + nameList.get(i));
+            }
 
-        */
-        System.out.println("Return de la fonction filllll");
 
-        aalist.add(0,23);
-        aalist.add(1,34);
-        aalist.add(2,45);
-        return aalist;
+            for(int i = 0; i < idList.size(); i++) {
+                System.out.println("VALEURS DE idList: " + idList.get(i));
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        listView = (ListView) findViewById(R.id.restaurant);
+
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                this,
+                android.R.layout.simple_list_item_1,
+                nameList);
+
+        listView.setAdapter(arrayAdapter);
 
 
     }

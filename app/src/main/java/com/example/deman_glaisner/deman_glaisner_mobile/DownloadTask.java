@@ -1,25 +1,19 @@
 package com.example.deman_glaisner.deman_glaisner_mobile;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Base64;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
+
 import javax.net.ssl.HttpsURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+
 
 public class DownloadTask extends AsyncTask<String, Void, String> {
 
@@ -96,44 +90,33 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
             buffer.append(line);
         }
 
-
         System.out.println("la boucle de buffurisation a tourné " + checker +" fois");
         is.close();
         result = buffer.toString();
-        System.out.println("buffer vaut: " +buffer);
-        System.out.println("buffer taille: " +buffer.length());
-
-        /*
-
-        try{
-
-            String webContent = result;
-            System.out.println("webcontent vaut:" +webContent);
-            JSONObject parentObject = new JSONObject(webContent);
-            JSONArray parentArray = parentObject.getJSONArray("nearby_restaurants");
-
-            //JSON MAGIC HERE JSON JSON JSON JSON JSON JSON JSON JSON jSON
-            for(int i = 0 ; i < parentArray.length() ; i++) {
-                System.out.println("RECUPERATION DES VALEURS JSON");
-                JSONObject finalObject = parentArray.getJSONObject(i);
-                String restaurantName = finalObject.getJSONObject("restaurant").getString("name");
-                System.out.println("Nom restaurant recupere" + restaurantName);
-                int id = finalObject.getJSONObject("restaurant").getJSONObject("R").getInt("id");
-                System.out.println("restaurad ID recupere" + id);
-                System.out.println("Ajout d'une valeur dans restaurantList");
-                //restaurantList.add(restaurantName);
-                System.out.println("AJOUT d'une valeur dans idList");
-                idlist.add(id);
-            }
-
-        } catch (JSONException e){}*/
-
-
-
-
+        System.out.println("result vaut: " +buffer);
+        System.out.println("result taille: " +result.length());
+        boolean bol = isJSONValid(result);
+        System.out.println("VALID JSON = " + bol);
+        System.out.println("buffer las char = " + buffer.substring(buffer.length() - 1));
 
 
         System.out.println("retour de downloadUrl: " +result);
         return result;
+    }
+
+    //verifie que le JSON soit bien valide
+    private boolean isJSONValid(String test) {
+        try {
+            new JSONObject(test);
+        } catch (JSONException ex) {
+            // edited, to include @Arthur's comment
+            // e.g. in case JSONArray is valid as well...
+            try {
+                new JSONArray(test);
+            } catch (JSONException ex1) {
+                return false;
+            }
+        }
+        return true;
     }
 }

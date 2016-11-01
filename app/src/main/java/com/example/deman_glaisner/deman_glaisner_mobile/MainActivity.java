@@ -86,17 +86,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /*
-    //Action a effectuer au click du boutton recherche
-    public void displayRestaurantList(View v){
-        dfrag = new DownloadFragment();
-        dfrag.show(getFragmentManager(), "test");
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                Intent i = new Intent(getApplicationContext(), RestaurantsList.class);
-                startActivity(i);
-            }
-        }, 100);
-    }*/
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(dfrag != null)
+            dfrag.dismiss();
+    }
 }
