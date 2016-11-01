@@ -4,6 +4,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Base64;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -11,7 +16,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class DownloadTask extends AsyncTask<String, Void, String> {
 
@@ -25,10 +33,16 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
             myURL = args[1];
             fileType = args[2];
 
+            System.out.println("args ===> webMethod: " +webMethod);
+            System.out.println("args ===> myurl: " +myURL);
+            System.out.println("args ===> filetype: " +fileType);
+
             if(args.length == 4)
                 postContent = args[3];
 
+            System.out.println("avant downloadUrl");
             return downloadUrl();
+
 
         } catch (IOException e) {
             return "Error while downloading";
@@ -38,66 +52,88 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 
     private String downloadUrl() throws IOException {
 
-        InputStream is = null;
+        System.out.println("On est dans downloadUrl");
         String result = "Erreur";
         String API_KEY = "92bf152a1c366bc032ffce163a0f5d44";
+        System.out.println("On y est toujours");
+        ArrayList<Integer> idlist = null;
 
-        try {
 
-            URL url = new URL(myURL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod(webMethod);
+        System.out.println("Debut du try");
+        URL url = new URL(myURL);
+        System.out.println("URL passée: " + myURL);
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+        System.out.println("instanciation de la connection");
 
-            if(fileType.equals("JSON"))
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setRequestProperty("user-key", " "+API_KEY);
-            conn.connect();
+        conn.setRequestMethod(webMethod);
 
-            if(webMethod.equals("POST")) {
-                DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+        if(fileType.equals("JSON")) {
+            System.out.println("Filetype est bien equal JSON");
+            conn.setRequestProperty("Content-Type", "application/json");
+            System.out.println("avant envoi de user key");
+            conn.setRequestProperty("user-key", " " + API_KEY);
+        }
+        conn.connect();
 
-                wr.writeBytes(postContent);
-                wr.flush();
-                wr.close();
-            }
+        System.out.println("CONNEXION CONNEXION CONNEXION CONNEXION !!!!");
 
-            is = conn.getInputStream();
+        InputStream is = conn.getInputStream();
 
-            if(fileType.equals("IMG")) {
-                Bitmap bitmapBeer;
-                String stringBeer;
-                byte[] byteBeer;
-                ByteArrayOutputStream byteOS;
-                bitmapBeer = BitmapFactory.decodeStream(is);
-                byteOS = new ByteArrayOutputStream();
-                bitmapBeer.compress(Bitmap.CompressFormat.PNG, 100, byteOS);
-                byteBeer = byteOS.toByteArray();
-                stringBeer = Base64.encodeToString(byteBeer, Base64.DEFAULT);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-                result = stringBeer;
-            }
+        StringBuilder buffer = new StringBuilder();
+        String line = "";
+        //String stringsecondaire = "";
 
-            else if(fileType.equals("TXT") || fileType.equals("JSON"))
-                result = readText(is, 1000);
+        int checker = 0;
 
-            else if(fileType.equals("BTXT"))
-                result = readText(is, 20000);
+        // PUTIN DE MERDE !!
+
+        while((line = reader.readLine()) != null){
+            checker++;
+            System.out.println("line length = " + line.length() + " and is equal to : " +line);
+            System.out.println("bufferisation checker: " + checker +" fois");
+            buffer.append(line);
         }
 
-        finally {
-            if (is != null)  {
-                is.close();
-            }
-        }
 
+        System.out.println("la boucle de buffurisation a tourné " + checker +" fois");
+        is.close();
+        result = buffer.toString();
+        System.out.println("buffer vaut: " +buffer);
+        System.out.println("buffer taille: " +buffer.length());
+
+        /*
+
+        try{
+
+            String webContent = result;
+            System.out.println("webcontent vaut:" +webContent);
+            JSONObject parentObject = new JSONObject(webContent);
+            JSONArray parentArray = parentObject.getJSONArray("nearby_restaurants");
+
+            //JSON MAGIC HERE JSON JSON JSON JSON JSON JSON JSON JSON jSON
+            for(int i = 0 ; i < parentArray.length() ; i++) {
+                System.out.println("RECUPERATION DES VALEURS JSON");
+                JSONObject finalObject = parentArray.getJSONObject(i);
+                String restaurantName = finalObject.getJSONObject("restaurant").getString("name");
+                System.out.println("Nom restaurant recupere" + restaurantName);
+                int id = finalObject.getJSONObject("restaurant").getJSONObject("R").getInt("id");
+                System.out.println("restaurad ID recupere" + id);
+                System.out.println("Ajout d'une valeur dans restaurantList");
+                //restaurantList.add(restaurantName);
+                System.out.println("AJOUT d'une valeur dans idList");
+                idlist.add(id);
+            }
+
+        } catch (JSONException e){}*/
+
+
+
+
+
+
+        System.out.println("retour de downloadUrl: " +result);
         return result;
-    }
-
-    private String readText(InputStream stream, int len) throws IOException {
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(stream, "UTF-8"), len);
-        String string = br.readLine();
-
-        return string;
     }
 }

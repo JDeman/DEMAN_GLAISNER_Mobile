@@ -27,23 +27,39 @@ public class RestaurantsList extends AppCompatActivity {
     private ArrayList<Integer> idlist;
     private ArrayList<String> restaurantList;
     private ListView listView;
-    private HashMap<String, List<String>> viewChildren;
+    //private HashMap<String, List<String>> viewChildren;
 
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.restaurant_list);
         listView = (ListView) findViewById(R.id.listView);
-        idlist = fillView();
-        Toast.makeText(getApplicationContext(), "Liste chargée", Toast.LENGTH_SHORT).show();
+        String webContent = null;
+        DownloadTask dlTask = new DownloadTask();
 
+        try{
+
+            dlTask.execute("GET", "https://developers.zomato.com/api/v2.1/search?lat=32.776664&lon=-96.796988&radius=2000", "JSON");
+            webContent = dlTask.get();
+
+        }catch (InterruptedException | ExecutionException e){}
+
+        System.out.println("webcontent vaut: ");
+        System.out.println("webcontent taille: " + webContent.length());
+        //idlist = fillView();
+
+        Toast.makeText(getApplicationContext(), "ID premier: ", Toast.LENGTH_SHORT).show();
+        //System.out.println("valeur: " +idlist.get(1));
+
+        /*
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
                 describeRestaurant(listView.getItemAtPosition(position).toString());
             }
-        });
+        });*/
     }
 
+    /*
     private void describeRestaurant(String clickedrestaurant) {
         int i = 0;
         while(!restaurantList.get(i).equals(clickedrestaurant))
@@ -54,25 +70,26 @@ public class RestaurantsList extends AppCompatActivity {
         intent.putExtra("restaurantID", clickedrestaurantID);
         startActivity(intent);
 
-    }
+    }*/
 
     private ArrayList<Integer> fillView() {
 
-        DownloadTask dlTask = new DownloadTask();
+
         JSONObject jsonObject = null;
         JSONArray jsonArray = null;
-        String webContent = new String();
+        String webContent;
         List<ArrayList<String>> parentsList = null;
         ArrayList<String> tmpList;
+        ArrayList<Integer> aalist = new ArrayList<>();
         int tmpId;
 
         //Arrays de coordonnées a mettre ici
 
 
-        dlTask.execute("GET", "https://developers.zomato.com/api/v2.1/search?lat=42.360083&lon=-71.05888&radius=3000", "TXT");
+        //return dlTask.execute("GET", "https://developers.zomato.com/api/v2.1/search?lat=32.776664&lon=-96.796988&radius=3000", "JSON");
+        //System.out.println("récupération du JSON");
 
-        try {
-            webContent = dlTask.get();
+        /*try {
 
             JSONObject parentObject = new JSONObject(webContent);
             JSONArray parentArray = parentObject.getJSONArray("nearby_restaurants");
@@ -80,20 +97,29 @@ public class RestaurantsList extends AppCompatActivity {
 
             //JSON MAGIC HERE JSON JSON JSON JSON JSON JSON JSON JSON jSON
             for(int i = 0 ; i < parentArray.length() ; i++) {
-
+                System.out.println("RECUPERATION DES VALEURS JSON");
                 JSONObject finalObject =  parentArray.getJSONObject(i);
                 String restaurantName = finalObject.getJSONObject("restaurant").getString("name");
+                System.out.println("Nom restaurant recupere" + restaurantName);
                 int id = finalObject.getJSONObject("restaurant").getJSONObject("R").getInt("id");
+                System.out.println("restaurad ID recupere" + id);
+                System.out.println("Ajout d'une valeur dans restaurantList");
                 restaurantList.add(restaurantName);
+                System.out.println("AJOUT d'une valeur dans idList");
                 idlist.add(id);
 
             }
 
-        } catch(InterruptedException | ExecutionException e) {
+        }catch (InterruptedException | ExecutionException | JSONException e){}
 
-        } catch (JSONException e){}
+        */
+        System.out.println("Return de la fonction filllll");
 
-        return idlist;
+        aalist.add(0,23);
+        aalist.add(1,34);
+        aalist.add(2,45);
+        return aalist;
+
 
     }
 }
