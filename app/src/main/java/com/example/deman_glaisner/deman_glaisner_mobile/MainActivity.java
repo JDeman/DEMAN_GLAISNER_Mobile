@@ -23,18 +23,6 @@ public class MainActivity extends AppCompatActivity {
 
     Hashtable<String, double[]> ht = new Hashtable<>();
 
-    /*
-    double[] bostonCord = new double[]{42.360083,-71.05888};
-    double[] nyCord = {40.712784,-74.005941};
-    double[] laCord= {34.052234,-118.243685};
-    double[] chicagoCord= {41.878114,-87.629798};
-    double[] seattleCord= {47.60621,-122.332071};
-    double[] denverCord= {47.60621,-122.332071};
-    double[] lasvegasCord= {36.169941,-115.13983};
-    double[] miamiCord = {25.76168,-80.19179};
-    double[] dallasCord = {32.776664,-96.796988};
-    double[] sfCord ={37.77493,-122.419416};*/
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,16 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         /*
-        ht.put("Boston", bostonCord);
-        ht.put("New York", nyCord);
-        ht.put("Los Angeles", laCord);
-        ht.put("Chicago", chicagoCord);
-        ht.put("Seattle", seattleCord);
-        ht.put("Denver", denverCord);
-        ht.put("Las Vegas", lasvegasCord);
-        ht.put("Miami", miamiCord);
-        ht.put("Dallas", dallasCord);
-        ht.put("San Francisco", sfCord);*/
+        */
 
         Button searchButton = (Button) findViewById(R.id.button);
         final Spinner spinner1 = (Spinner) findViewById(R.id.spinner1);
@@ -65,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String text_spinner1 = spinner1.getSelectedItem().toString();
+                final String text_spinner1 = spinner1.getSelectedItem().toString();
                 System.out.println(text_spinner1);
                 Toast.makeText(getApplicationContext(), "Liste pour: " + text_spinner1, Toast.LENGTH_SHORT).show();
 
@@ -78,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run(){
                         System.out.println("niveau 3");
                         Intent i = new Intent(getApplicationContext(), RestaurantsList.class);
+                        i.putExtra("ville_choisie", text_spinner1);
                         System.out.println("niveau 4");
                         startActivity(i);
                     }
